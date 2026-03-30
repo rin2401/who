@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Who - Team Directory</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    
+    .subtitle {
+      color: #888;
+      font-size: 1rem;
+    }
+    
+    .search-box {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .search-input {
+      flex: 1;
+      min-width: 250px;
+      padding: 1rem 1.5rem;
+      border: 2px solid #333;
+      border-radius: 12px;
+      background: #1a1a1a;
+      color: #fff;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .company-select {
+      padding: 1rem 1.5rem;
+      border: 2px solid #333;
+      border-radius: 12px;
+      background: #1a1a1a;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    
+    .company-select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .profiles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .profile-card {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    
+    .profile-card:hover {
+      transform: translateY(-4px);
+      border-color: #667eea;
+    }
+    
+    .profile-header {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #333;
+    }
+    
+    .avatar-placeholder {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .profile-info {
+      flex: 1;
+    }
+    
+    .profile-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    
+    .profile-role {
+      color: #888;
+      font-size: 0.9rem;
+    }
+    
+    .profile-link {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background: #333;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+    }
+    
+    .profile-link:hover {
+      background: #444;
+    }
+    
+    .face-search-section {
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 16px;
+    }
+    
+    .face-search-section h3 {
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      color: #888;
+    }
+    
+    .face-search-box {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .file-input {
+      display: none;
+    }
+    
+    .upload-btn {
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    
+    .upload-btn:hover {
+      opacity: 0.9;
+    }
+    
+    .preview-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    
+    .results-label {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #667eea;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: #888;
+    }
+    
+    .empty {
+      text-align: center;
+      padding: 3rem;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Who</h1>
+      <p class="subtitle">Team Directory - Search by name, role, or face</p>
+    </header>
+    
+    <div class="search-box">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search by name or role..." />
+      <select class="company-select" id="companySelect">
+        <option value="">All Companies</option>
+      </select>
+    </div>
+    
+    <div class="face-search-section">
+      <h3>🔍 Face Search</h3>
+      <div class="face-search-box">
+        <input type="file" id="faceInput" class="file-input" accept="image/*" />
+        <button class="upload-btn" onclick="document.getElementById('faceInput').click()">
+          Upload Photo
+        </button>
+        <img id="previewImg" class="preview-img" style="display:none" />
+        <span id="previewLabel" class="results-label" style="display:none"></span>
+      </div>
+    </div>
+    
+    <div class="profiles-grid" id="profilesGrid"></div>
+    <div class="loading" id="loading" style="display:none">Loading...</div>
+    <div class="empty" id="empty" style="display:none">No profiles found</div>
+  </div>
+  
+  <script>
+    const API_BASE = 'http://localhost:8000/api';
+    let profiles = [];
+    let companies = [];
+    
+    async function loadCompanies() {
+      try {
+        const res = await fetch(`${API_BASE}/companies`);
+        const data = await res.json();
+        companies = data.companies || [];
+        const select = document.getElementById('companySelect');
+        companies.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c;
+          opt.textContent = c;
+          select.appendChild(opt);
+        });
+      } catch (e) {
+        console.error('Failed to load companies:', e);
+      }
+    }
+    
+    async function loadProfiles(q = '', company = '') {
+      const grid = document.getElementById('profilesGrid');
+      const loading = document.getElementById('loading');
+      const empty = document.getElementById('empty');
+      
+      grid.style.display = 'none';
+      empty.style.display = 'none';
+      loading.style.display = 'block';
+      
+      try {
+        const params = new URLSearchParams();
+        if (q) params.append('q', q);
+        if (company) params.append('company', company);
+        
+        const res = await fetch(`${API_BASE}/profiles?${params}`);
+        const data = await res.json();
+        profiles = data.profiles || [];
+        
+        renderProfiles(profiles);
+      } catch (e) {
+        console.error('Failed to load profiles:', e);
+        grid.innerHTML = '<p style="color:#ff6b6b">Error loading profiles. Is the server running?</p>';
+        grid.style.display = 'block';
+      }
+      
+      loading.style.display = 'none';
+    }
+    
+    function renderProfiles(profs) {
+      const grid = document.getElementById('profilesGrid');
+      const empty = document.getElementById('empty');
+      
+      if (profs.length === 0) {
+        grid.style.display = 'none';
+        empty.style.display = 'block';
+        return;
+      }
+      
+      grid.style.display = 'grid';
+      empty.style.display = 'none';
+      
+      grid.innerHTML = profs.map(p => `
+        <div class="profile-card">
+          <div class="profile-header">
+            ${p.avatar_url 
+              ? `<img src="${p.avatar_url}" class="avatar" alt="${p.name}" />`
+              : `<div class="avatar-placeholder">${p.name.charAt(0)}</div>`
+            }
+            <div class="profile-info">
+              <div class="profile-name">${p.name}</div>
+              <div class="profile-role">${p.role || 'No role'}</div>
+            </div>
+          </div>
+          <a href="${p.profile_url}" target="_blank" class="profile-link">View LinkedIn →</a>
+        </div>
+      `).join('');
+    }
+    
+    document.getElementById('faceInput').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      const previewImg = document.getElementById('previewImg');
+      const previewLabel = document.getElementById('previewLabel');
+      
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        previewImg.src = ev.target.result;
+        previewImg.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+      
+      previewLabel.textContent = 'Searching...';
+      previewLabel.style.display = 'inline';
+      
+      try {
+        const base64 = await fileToBase64(file);
+        
+        const company = document.getElementById('companySelect').value;
+        const res = await fetch(`${API_BASE}/search/face`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image_base64: base64, company })
+        });
+        
+        const data = await res.json();
+        
+        if (data.error || data.detail) {
+          previewLabel.textContent = 'Error: ' + (data.error || data.detail);
+          return;
+        }
+        
+        const results = data.results || [];
+        if (results.length === 0) {
+          previewLabel.textContent = 'No matching faces found';
+          document.getElementById('profilesGrid').innerHTML = '';
+          document.getElementById('empty').style.display = 'block';
+        } else {
+          previewLabel.textContent = `Found ${results.length} similar faces`;
+          renderProfiles(results.map(r => r.profile));
+        }
+      } catch (e) {
+        previewLabel.textContent = 'Error: ' + e.message;
+      }
+    });
+    
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+    
+    let searchTimeout;
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        loadProfiles(e.target.value, document.getElementById('companySelect').value);
+      }, 300);
+    });
+    
+    document.getElementById('companySelect').addEventListener('change', (e) => {
+      loadProfiles(document.getElementById('searchInput').value, e.target.value);
+    });
+    
+    loadCompanies();
+    loadProfiles();
+  </script>
+</body>
+</html>
